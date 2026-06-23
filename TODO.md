@@ -4,46 +4,68 @@
 
 | Fase | Status | Previsão |
 |---|---|---|
-| **Fase 1: Fundação** | 🔴 Não iniciado | 2 semanas |
-| **Fase 2: Plugin — áudio** | 🔴 Não iniciado | 3 semanas |
+| **Fase 1: Fundação (plugin mínimo + PWA mínimo)** | 🔴 Não iniciado | 2 semanas |
+| **Fase 2: Plugin — áudio completo** | 🔴 Não iniciado | 3 semanas |
 | **Fase 3: PWA — editor e controle** | 🔴 Não iniciado | 3 semanas |
 | **Fase 4: Song mode e setlists** | 🔴 Não iniciado | 2 semanas |
 | **Fase 5: IA e polimento** | 🔴 Não iniciado | 2 semanas |
 | **Fase 6: Mobile — Android e iOS** | 🔴 Não iniciado | 2 semanas |
 
+**Total: 14 semanas**
+
 ---
 
-## Fase 1: Fundação (semanas 1-2)
+## Fase 1: Fundação — plugin mínimo + PWA mínimo (semanas 1-2)
+
+**Objetivo:** ao final da semana 1, plugin compila e toca 1 sample via MIDI. Ao final da semana 2, PWA mostra grid mockada e conecta WebMIDI.
 
 ### 1.1 Estrutura do repositório
 
-- [ ] **1.1.1** Criar `plugin/` com estrutura JUCE mínima (Projucer ou CMake manual)
+- [ ] **1.1.1** Criar `plugin/` com CMake + JUCE mínimo (compila como VST3 + Standalone)
 - [ ] **1.1.2** Criar `frontend/` com `npm create vite@latest` (Vue 3 + TypeScript)
-- [ ] **1.1.3** Configurar Tailwind CSS com glassmorphism components
-- [ ] **1.1.4** Configurar `vite-plugin-pwa` com manifest e service worker
-- [ ] **1.1.5** Configurar `vue-i18n` com idioma português (UI)
-- [ ] **1.1.6** Configurar Pinia + Vue Router
-- [ ] **1.1.7** Configurar `idb-keyval` para persistência IndexedDB
-- [ ] **1.1.8** Criar `.gitignore` para `plugin/Build/`, `frontend/dist/`, `node_modules/`
-- [ ] **1.1.9** Configurar ESLint + Prettier (frontend)
-- [ ] **1.1.10** Configurar Catch2 (plugin, testes unitários)
+- [ ] **1.1.3** Configurar Tailwind CSS com glassmorphism base
+- [ ] **1.1.4** Configurar `vite-plugin-pwa` com manifest
+- [ ] **1.1.5** Configurar Pinia + Vue Router (rotas vazias)
+- [ ] **1.1.6** Configurar `idb-keyval` para IndexedDB
+- [ ] **1.1.7** Configurar ESLint + Prettier (frontend)
 
-### 1.2 Dados padrão
+### 1.2 Plugin mínimo (compila e toca)
 
-- [ ] **1.2.1** Criar `data/patterns/samba.json` com os 14 instrumentos × 16 steps
-- [ ] **1.2.2** Criar `data/patterns/pagode.json`
-- [ ] **1.2.3** Criar `data/patterns/partido_alto.json`
-- [ ] **1.2.4** Criar `data/patterns/samba_reggae.json`
-- [ ] **1.2.5** Criar `data/patterns/ijexa.json`
-- [ ] **1.2.6** Criar `data/patterns/frevo.json`
-- [ ] **1.2.7** Criar `data/patterns/maracatu.json`
-- [ ] **1.2.8** Criar `data/patterns/intro.json` (apenas surdo marcando)
-- [ ] **1.2.9** Criar `data/patterns/virada.json` (fill/break tutti)
-- [ ] **1.2.10** Função `loadDefaults()` que carrega todos os padrões built-in
+- [ ] **1.2.1** `PluginProcessor.h/cpp` — `processBlock` vazio que compila
+- [ ] **1.2.2** `PluginEditor.h/cpp` — placeholder (texto "Lolooper")
+- [ ] **1.2.3** Carregar 1 sample hardcoded e tocar ao receber Note On MIDI
+- [ ] **1.2.4** Testar no Bitwig: plugin carrega, som sai ao apertar pad MIDI
+
+### 1.3 PWA mínimo (grid mockada + MIDI)
+
+- [ ] **1.3.1** `App.vue` com `<router-view>` e rota `/editor`
+- [ ] **1.3.2** `PatternGrid.vue` — grid 14×16 com dados mockados (4 estados visuais)
+- [ ] **1.3.3** `Transport.vue` — botões Play/Stop mockados
+- [ ] **1.3.4** `useWebMIDI.ts` — `connect()` e `sendNote()` funcionais
+- [ ] **1.3.5** `midiStore.ts` — armazena estado da conexão MIDI
+- [ ] **1.3.6** Testar: PWA abre no Chrome, conecta porta MIDI virtual, envia Note On
+
+### 1.4 Comunicação real (fim da semana 2)
+
+- [ ] **1.4.1** Mapear Note 36-49 → toggle track mute no plugin
+- [ ] **1.4.2** PWA envia Note MIDI → plugin reage → som muda
+- [ ] **1.4.3** Plugin envia SysEx 0x05 (transport state) a cada beat
+- [ ] **1.4.4** PWA recebe SysEx 0x05 e atualiza indicador de beat
+
+### 1.5 Dados padrão
+
+- [ ] **1.5.1** Criar `data/patterns/samba.json` com 14 instrumentos × 16 steps
+- [ ] **1.5.2** Criar `data/patterns/pagode.json`
+- [ ] **1.5.3** Criar `data/patterns/partido_alto.json`
+- [ ] **1.5.4** Criar `data/patterns/intro.json` + `data/patterns/virada.json`
+- [ ] **1.5.5** Criar `data/patterns/samba_reggae.json`, `ijexa.json`, `frevo.json`, `maracatu.json` (Fase 2 ou sob demanda)
+- [ ] **1.5.6** Função `loadDefaults()` no PWA — carrega padrões built-in
 
 ---
 
-## Fase 2: Plugin — áudio (semanas 3-5)
+## Fase 2: Plugin — áudio completo (semanas 3-5)
+
+**Objetivo:** sequenciador completo, mixer, todos os parâmetros VST3, MIDI REC, editor mínimo. O plugin já compila e toca 1 sample desde a Fase 1.
 
 ### 2.1 Estrutura base do plugin
 
@@ -91,8 +113,9 @@
 - [ ] **2.5.3** Processar SysEx → carregar pattern, song structure
 - [ ] **2.5.4** Mapeamento CC completo (volume 20-33, pan 34-47, accent 48-61)
 - [ ] **2.5.5** Mapeamento Note completo (mute 36-49, transport 114-122)
-- [ ] **2.5.6** SysEx protocol: request patterns (0x01), response (0x02), push (0x03)
-- [ ] **2.5.7** Testes unitários: parsing de CC, Note, SysEx
+- [ ] **2.5.6** SysEx protocol: request (0x01), response (0x02), push (0x03), song (0x04), transport state (0x05), song feedback (0x06)
+- [ ] **2.5.7** SysEx output: plugin envia 0x05 a cada beat, 0x06 a cada compasso
+- [ ] **2.5.8** Testes unitários: parsing de CC, Note, SysEx
 
 ### 2.6 Pattern management no plugin
 

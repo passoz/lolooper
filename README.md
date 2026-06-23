@@ -61,13 +61,15 @@ Lolooper é um sequenciador de padrões rítmicos brasileiros (samba, pagode, ij
 
 ## Cenários de uso
 
-| Cenário | Dispositivo | Formato | Equipamento extra |
-|---|---|---|---|
-| **Show completo** | Laptop | VST3 no DAW | Voz + instrumento + controlador MIDI |
-| **Show compacto** | Celular Android | Standalone .apk | Controlador MIDI USB + mesa de som |
-| **Roda de samba** | iPad | Standalone | Controlador MIDI Bluetooth + caixa portátil |
-| **Ensaio / edição** | Qualquer | PWA no navegador | Só o dispositivo |
-| **Estúdio / gravação** | Desktop | VST3 no DAW | Gravação multipista, automação, FX chain |
+| Cenário | Dispositivo | Formato | Comunicação | Equipamento extra |
+|---|---|---|---|---|
+| **Show completo** | Laptop | VST3 no DAW | PWA → WebMIDI → DAW → Plugin | Voz + instrumento + controlador MIDI |
+| **Show compacto** | Celular Android | Standalone .apk | MIDI Bluetooth/USB direto no app | Controlador MIDI + mesa de som |
+| **Roda de samba** | iPad | Standalone | MIDI Bluetooth direto no app | Controlador MIDI + caixa portátil |
+| **Ensaio / edição** | Qualquer | PWA no navegador | N/A (só edição offline) | Só o dispositivo |
+| **Estúdio / gravação** | Desktop | VST3 no DAW | PWA → WebMIDI → DAW → Plugin | Gravação multipista, automação, FX chain |
+
+**Importante:** Nos cenários standalone mobile (Android/iOS), o PWA funciona como **editor offline** — você edita patterns e músicas, exporta JSON, e o app standalone importa. O controle em tempo real no palco é feito via MIDI Bluetooth/USB direto no app, não pelo PWA.
 
 ---
 

@@ -21,6 +21,11 @@ Persiste em: IndexedDB             Persiste em: arquivo JSON
 
 **Regra fundamental:** as duas codebases **nunca** se comunicam diretamente. Toda comunicação é MIDI.
 
+**Modos de comunicação:**
+- **Desktop com DAW:** PWA → WebMIDI → Porta MIDI Virtual → DAW → Plugin VST3
+- **Desktop standalone:** PWA → WebMIDI → Porta MIDI Virtual → App standalone (se exposto como device MIDI)
+- **Mobile standalone (Android/iOS):** PWA é **editor offline**. Exporta JSON → app importa. Controle em tempo real é via MIDI Bluetooth/USB direto no app.
+
 **Multi-target:** o plugin compila para **todos** os targets do mesmo código C++:
 - VST3 (Linux, Windows, Mac)
 - Standalone Desktop (Linux, Windows, Mac)
@@ -103,7 +108,9 @@ SysEx header: 0xF0 0x7D 0xXX ...
   0x01 = Request patterns (PWA → Plugin)
   0x02 = Response patterns (Plugin → PWA)
   0x03 = Push patterns (PWA → Plugin)
-  0x04 = Song structure update
+  0x04 = Song structure update (PWA → Plugin)
+  0x05 = Transport state (Plugin → PWA) — playing, step, beat, bar
+  0x06 = Song feedback (Plugin → PWA) — current section, bar progress
 ```
 
 ---

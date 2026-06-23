@@ -149,3 +149,19 @@ Plugin substitui o pattern em tempo real, sem interromper o áudio.
 F0 7D 04 <JSON bytes> F7
 ```
 JSON: estrutura completa da música (nome, BPM, seções).
+
+### SysEx 0x05 — Transport state (Plugin → PWA)
+```
+F0 7D 05 <JSON bytes> F7
+```
+JSON: `{"playing":true,"step":7,"beat":1,"bar":3,"bpm":104}`
+
+Enviado pelo plugin a cada beat (ou quando o estado muda). O PWA usa pra atualizar indicadores visuais.
+
+### SysEx 0x06 — Song feedback (Plugin → PWA)
+```
+F0 7D 06 <JSON bytes> F7
+```
+JSON: `{"section":"verso","sectionBar":5,"totalBars":16,"nextSection":"refrao"}`
+
+Enviado pelo plugin a cada compasso. O PWA usa pra mostrar progresso da música e alimentar a IA.

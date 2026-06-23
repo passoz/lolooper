@@ -395,7 +395,9 @@ song:
           duration: 2
 ```
 
-### 4.3 Multi-sample track definition (para o plugin)
+### 4.3 Multi-sample track definition (futuro — pós 1.0)
+
+> ⚠️ **Não implementar na Fase 2.** O modelo inicial usa float grid simples (1 sample por track). Multi-sample será adicionado após o 1.0.
 
 ```json
 {
