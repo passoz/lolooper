@@ -1,17 +1,38 @@
-__pycache__/
-*.pyc
-*.pyo
-*.egg-info/
-dist/
-build/
-.eggs/
+# Plugin (JUCE)
+plugin/Build/
+plugin/JUCE/
+plugin/*.jucer
+*.o
+*.obj
+*.a
+*.lib
+*.dll
 *.so
-.venv/
-venv/
+*.dylib
+*.vst3
+*.component
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+bin/
+build/
+out/
+
+# Env
 .env
-*.yaml
-!example_looper.yaml
-samples/*
-!samples/.gitkeep
-.pytest_cache/
-.ruff_cache/
+.env.local

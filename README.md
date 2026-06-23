@@ -1,129 +1,198 @@
 # 🥁 Lolooper
 
-**Live performance looper for Brazilian samba & pagode — MIDI + AI controllable.**
+**Live performance looper for Brazilian music — MIDI-controllable, PWA-editable, runs everywhere.**
 
-Lolooper is a looper/sequencer designed for live performance. Load samples of Brazilian percussion instruments, control them via MIDI controller during the show, and let an AI agent manage the arrangement via HTTP API.
+Lolooper é um sequenciador de padrões rítmicos brasileiros (samba, pagode, ijexá, frevo, maracatu...) feito para **performance ao vivo**. Você edita padrões num PWA, controla tudo via MIDI (controlador físico ou IA), e o som sai onde você quiser:
 
-## Features
+- **Plugin VST3** no seu DAW junto com voz e instrumento
+- **App standalone** no laptop (Windows/Linux/Mac)
+- **App standalone** no celular Android (só ele + controlador MIDI USB + mesa)
+- **App standalone** no iPhone/iPad (só ele + controlador MIDI Bluetooth + caixa)
 
-- **Loop engine** — play samples in quantized 16th-note grids synced to BPM
-- **14 instrument tracks** — surdo (1ª/2ª/3ª), caixa, repique, tamborim, pandeiro, cuíca, agogô, reco-reco, tantã, cavaquinho, violão 7 cordas, banjo
-- **5 rhythm styles** — samba, pagode, partido alto, samba-reggae, intro/virada
-- **MIDI control** — toggle tracks, adjust volume, tempo, swing via any MIDI controller
-- **AI API** — full REST API for external control (AI agents, scripts, automation)
-- **Live mixing** — per-track volume, pan, mute, solo
-- **Transport** — play, stop, pause, BPM (20–300), swing (0–100%)
-- **Per-track nuance** — accent multiplier, humanize setting
+---
 
-## Quick Start
-
-```bash
-# Install
-pip install lolooper
-
-# Run with defaults (no samples — add your own!)
-lolooper
-
-# Run with config
-lolooper --config my_show.yaml
-
-# List available MIDI ports
-lolooper --list-midi
-
-# List pattern styles
-lolooper --list-styles
-```
-
-## AI Control (HTTP API)
-
-The API runs on `http://127.0.0.1:8710` by default. Full OpenAPI docs at `/docs`.
-
-```bash
-# Transport
-curl -X POST http://127.0.0.1:8710/transport/play
-curl -X POST http://127.0.0.1:8710/transport/stop
-curl -X PUT  http://127.0.0.1:8710/transport -H "Content-Type: application/json" -d '{"bpm": 98}'
-
-# Tracks — toggle, volume, solo
-curl -X POST http://127.0.0.1:8710/tracks/pandeiro/mute
-curl -X POST http://127.0.0.1:8710/tracks/surdo_1/solo
-curl -X PUT  http://127.0.0.1:8710/tracks/cuica -H "Content-Type: application/json" -d '{"volume": 0.7, "pan": 0.3}'
-
-# Switch patterns (all tracks or per-track)
-curl -X POST http://127.0.0.1:8710/patterns/pagode
-curl -X POST http://127.0.0.1:8710/tracks/surdo_3/pattern/virada
-
-# Full status
-curl http://127.0.0.1:8710/status | jq
-```
-
-## Samples
-
-Place `.wav` files in a `samples/` directory:
+## Arquitetura
 
 ```
-samples/
-├── surdo_1.wav      # Surdo de primeira (marcação)
-├── surdo_2.wav      # Surdo de segunda (resposta)
-├── surdo_3.wav      # Surdo de terceira (virada)
-├── caixa.wav        # Caixa (snare)
-├── tamborim.wav     # Tamborim
-├── pandeiro.wav     # Pandeiro
-├── cuica.wav        # Cuíca
-├── agogo.wav        # Agogô
-├── reco_reco.wav    # Reco-reco
-├── tantan.wav       # Tantã
-├── repique.wav      # Repique
-├── cavaquinho.wav   # Cavaquinho
-├── violao_7.wav     # Violão 7 cordas
-└── banjo.wav        # Banjo
+┌─────────────────────────────────────────┐
+│  PWA (Vue 3 + Pinia + Vite)             │
+│  Abre no Chrome, instala como app       │
+│  Funciona em: Desktop, Tablet, Celular  │
+│                                         │
+│  ┌───────────────────────────────────┐  │
+│  │  Pattern Editor (grid 14×16)      │  │
+│  │  Song Editor (seções em sequência)│  │
+│  │  Setlist Manager                  │  │
+│  │  Transport (play/stop/BPM/swing)  │  │
+│  │  Track Mixer (mute/solo/vol/pan)  │  │
+│  │  IA Engine (Web Worker opcional)  │  │
+│  └───────────────────────────────────┘  │
+│                                         │
+│  Persiste em IndexedDB (offline)        │
+│  WebMIDI API → porta MIDI virtual       │
+└──────────────────┬──────────────────────┘
+                   │ MIDI (CC/Note/SysEx)
+        ┌──────────┼──────────┐
+        ▼          ▼          ▼
+┌──────────┐ ┌──────────┐ ┌──────────────┐
+│ DESKTOP  │ │ ANDROID  │ │ iOS          │
+│          │ │          │ │              │
+│ DAW+VST3 │ │ Standalone│ │ Standalone   │
+│ ou Stand-│ │ app .apk │ │ app .ipa     │
+│ alone    │ │ + MIDI   │ │ + MIDI       │
+│          │ │ USB      │ │ Bluetooth    │
+└──────────┘ └──────────┘ └──────────────┘
+  mesmo código C++ (JUCE) — targets diferentes
 ```
 
-## Configuration
+**Duas codebases. Todos os formatos. Comunicação 100% MIDI.**
 
-Create a `looper.yaml`:
+---
 
-```yaml
-bpm: 98
-swing: 0.12
-beats_per_bar: 4
-bars_per_loop: 4
-samples_dir: my_samples
+## Por que essa arquitetura?
 
-midi_input_port: "MPK mini:MPK mini MIDI 1"
+| Decisão | Motivo |
+|---|---|
+| **JUCE (C++)** | Áudio em tempo real exige C++. JUCE compila o MESMO código pra VST3, Standalone Desktop, Android e iOS. |
+| **PWA Vue (navegador)** | Editor confortável, IndexedDB offline, WebMIDI nativo. Instalável como app em qualquer dispositivo. |
+| **MIDI como protocolo** | Latência <1ms, nativo do DAW, mesmo canal pra IA e controlador físico. Zero código de rede. |
+| **Sem backend** | Desnecessário. PWA persiste no navegador. MIDI conecta direto. Menos peças = menos falhas. |
+| **Multi-target** | Mesmo C++ = VST3 + Desktop + Android + iOS. Leva o setup que quiser pro palco. |
 
-tracks:
-  - name: surdo_1
-    sample_path: my_samples/surdo_marcacao.wav
-    volume: 0.9
-    midi_note_on: 36
-    pattern: samba
-  - name: pandeiro
-    sample_path: my_samples/pandeiro_close.wav
-    volume: 0.75
-    midi_note_on: 44
-    pattern: samba
+## Cenários de uso
+
+| Cenário | Dispositivo | Formato | Equipamento extra |
+|---|---|---|---|
+| **Show completo** | Laptop | VST3 no DAW | Voz + instrumento + controlador MIDI |
+| **Show compacto** | Celular Android | Standalone .apk | Controlador MIDI USB + mesa de som |
+| **Roda de samba** | iPad | Standalone | Controlador MIDI Bluetooth + caixa portátil |
+| **Ensaio / edição** | Qualquer | PWA no navegador | Só o dispositivo |
+| **Estúdio / gravação** | Desktop | VST3 no DAW | Gravação multipista, automação, FX chain |
+
+---
+
+## Stack técnica
+
+| Camada | Tecnologia |
+|---|---|
+| **Motor de áudio** | JUCE 8+ (C++17), VST3 + Standalone (Desktop, Android, iOS) |
+| **Áudio Android** | Oboe (nativo, baixa latência) |
+| **Áudio iOS** | CoreAudio (nativo) |
+| **Frontend** | Vue 3 (Composition API, `<script setup>`), TypeScript |
+| **Estado** | Pinia (stores reativas) |
+| **Roteamento** | Vue Router (editor / songs / setlist / settings) |
+| **Estilo** | Tailwind CSS + Glassmorphism (`backdrop-blur`, `bg-white/10`) |
+| **Build** | Vite + `vite-plugin-pwa` |
+| **MIDI (PWA)** | WebMIDI API (nativo Chrome/Edge) |
+| **MIDI (Android)** | Android MIDI API (USB + Bluetooth) |
+| **MIDI (iOS)** | CoreMIDI (USB + Bluetooth) |
+| **Persistência** | IndexedDB via `idb-keyval` |
+| **IA** | Web Worker (thread separada, opcional) |
+| **Drag & drop** | `@vueuse/core` |
+
+---
+
+## Funcionalidades
+
+### Core
+- **14 instrumentos** — surdo 1ª/2ª/3ª, caixa, repique, tamborim, pandeiro, cuíca, agogô, reco-reco, tantã, cavaquinho, violão 7 cordas, banjo
+- **Grid de 16 semicolcheias** — edição com 4 velocidades (· ○ ◉ ●)
+- **Vários estilos rítmicos** — samba, pagode, partido alto, samba-reggae, ijexá, frevo, maracatu
+- **Edição por gravação MIDI** — toca no controlador, plugin grava quantizado na grid
+- **Song mode** — sequência de seções (intro → verso → refrão → virada), cada uma com pattern + número de compassos
+- **Multi-sample por track** — surdo aberto, abafado, com baqueta; pandeiro grave/agudo/platinela
+- **Swing e humanize** — swing ajustável (0-100%), humanize (variação aleatória de timing)
+
+### Controle
+- **MIDI físico** — pads, knobs, faders de qualquer controlador
+- **MIDI da IA** — Web Worker envia CC/Note pela mesma porta virtual
+- **PWA touch** — interface amigável pra tablet/touchscreen
+
+### Performance
+- **Setlists** — organize músicas por show, com BPM, tom e anotações
+- **Exportação** — patterns em JSON, plugin carrega ao abrir projeto do DAW
+- **PWA offline** — tudo funciona sem internet
+- **Instalável** — ícone no desktop, janela própria, sem barra de navegador
+
+---
+
+## Estrutura do repositório
+
+```
+lolooper/
+├── plugin/                    ← JUCE (C++)
+│   ├── CMakeLists.txt
+│   └── Source/
+│       ├── PluginProcessor.cpp/h
+│       ├── PluginEditor.cpp/h
+│       ├── Sequencer.cpp/h
+│       ├── Mixer.cpp/h
+│       └── SampleLib.cpp/h
+│
+├── frontend/                  ← Vue 3 + PWA
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── public/
+│   │   ├── manifest.json
+│   │   ├── sw.js
+│   │   └── icons/
+│   └── src/
+│       ├── App.vue
+│       ├── main.ts
+│       ├── components/
+│       │   ├── PatternGrid.vue
+│       │   ├── Transport.vue
+│       │   ├── TrackList.vue
+│       │   ├── SongEditor.vue
+│       │   └── SetlistManager.vue
+│       ├── stores/
+│       │   ├── patterns.ts
+│       │   ├── songs.ts
+│       │   ├── setlist.ts
+│       │   └── midi.ts
+│       ├── db/
+│       │   └── database.ts
+│       ├── worker/
+│       │   └── ia-worker.ts
+│       └── composables/
+│           ├── useWebMIDI.ts
+│           └── usePattern.ts
+│
+├── docs/
+│   ├── patterns.md            ← Referência dos padrões rítmicos
+│   ├── midi-mapping.md        ← Tabela de CC/Note mapping
+│   └── song-format.md         ← Formato YAML de músicas
+│
+├── README.md                  ← Este arquivo
+├── AGENTS.md                  ← Instruções para agentes de IA
+├── SPEC.md                    ← Especificação técnica
+└── TODO.md                    ← Planejamento e tarefas
 ```
 
-## MIDI Mapping
+---
 
-| Control | Type | Default |
-|---------|------|---------|
-| Play | Note 114 | C#8 |
-| Stop | Note 115 | D8 |
-| Track toggle | Notes 36–49 | C2–C#3 |
-| Track volume | CC 20–33 | — |
-| Tempo | CC 15 | 40–200 BPM |
-| Swing | CC 16 | 0–100% |
-| Master volume | CC 7 | — |
+## Como usar (visão geral)
 
-## Requirements
+### Em casa — preparando o show
+1. Abra o PWA (atalho no desktop)
+2. Edite patterns na grid 14×16 ou grave via MIDI
+3. Organize músicas com seções (intro, verso, refrão)
+4. Monte a setlist do show
+5. Exporte patterns → cole na pasta do projeto do Bitwig
 
-- Python 3.10+
-- Linux / macOS / Windows
-- Audio output device
-- MIDI controller (optional — API works without one)
+### No palco — tocando
+1. Abra o Bitwig com o projeto do show
+2. Abra o PWA
+3. Transport, mute/solo, scenes: tudo pelo PWA ou controlador físico
+4. IA opcional: ative o Web Worker para assistir/sugerir
 
-## License
+---
+
+## Licença
 
 MIT
+
+## Autor
+
+Fernando Passos
