@@ -4,14 +4,15 @@
 
 | Fase | Status | Previsão |
 |---|---|---|
-| **Fase 1: Fundação (plugin mínimo + PWA mínimo)** | 🔴 Não iniciado | 2 semanas |
-| **Fase 2: Plugin — áudio completo** | 🔴 Não iniciado | 3 semanas |
+| **Fase 1: Fundação (plugin mínimo + PWA mínimo)** | 🟢 Concluída | 2 semanas |
+| **Fase 2: Plugin — áudio completo** | 🟡 Em andamento | 3 semanas |
 | **Fase 3: PWA — editor e controle** | 🔴 Não iniciado | 3 semanas |
 | **Fase 4: Song mode e setlists** | 🔴 Não iniciado | 2 semanas |
 | **Fase 5: IA e polimento** | 🔴 Não iniciado | 2 semanas |
 | **Fase 6: Mobile — Android e iOS** | 🔴 Não iniciado | 2 semanas |
+| **Fase 7: Instrumentos harmônicos — SF2/SFZ + Arpeggiador** | 🔴 Não iniciado | 2 semanas |
 
-**Total: 14 semanas**
+**Total: 16 semanas**
 
 ---
 
@@ -21,45 +22,45 @@
 
 ### 1.1 Estrutura do repositório
 
-- [ ] **1.1.1** Criar `plugin/` com CMake + JUCE mínimo (compila como VST3 + Standalone)
-- [ ] **1.1.2** Criar `frontend/` com `npm create vite@latest` (Vue 3 + TypeScript)
-- [ ] **1.1.3** Configurar Tailwind CSS com glassmorphism base
-- [ ] **1.1.4** Configurar `vite-plugin-pwa` com manifest
-- [ ] **1.1.5** Configurar Pinia + Vue Router (rotas vazias)
-- [ ] **1.1.6** Configurar `idb-keyval` para IndexedDB
-- [ ] **1.1.7** Configurar ESLint + Prettier (frontend)
+- [x] **1.1.1** Criar `plugin/` com CMake + JUCE mínimo (compila como VST3 + Standalone)
+- [x] **1.1.2** Criar `frontend/` com `npm create vite@latest` (Vue 3 + TypeScript)
+- [x] **1.1.3** Configurar Tailwind CSS com glassmorphism base
+- [x] **1.1.4** Configurar `vite-plugin-pwa` com manifest
+- [x] **1.1.5** Configurar Pinia + Vue Router (rotas vazias)
+- [x] **1.1.6** Configurar `idb-keyval` para IndexedDB
+- [x] **1.1.7** Configurar ESLint + Prettier (frontend)
 
 ### 1.2 Plugin mínimo (compila e toca)
 
-- [ ] **1.2.1** `PluginProcessor.h/cpp` — `processBlock` vazio que compila
-- [ ] **1.2.2** `PluginEditor.h/cpp` — placeholder (texto "Lolooper")
-- [ ] **1.2.3** Carregar 1 sample hardcoded e tocar ao receber Note On MIDI
-- [ ] **1.2.4** Testar no Bitwig: plugin carrega, som sai ao apertar pad MIDI
+- [x] **1.2.1** `PluginProcessor.h/cpp` — `processBlock` vazio que compila
+- [x] **1.2.2** `PluginEditor.h/cpp` — placeholder (texto "Lolooper")
+- [x] **1.2.3** Sequencer + SampleLib + Mixer: plugin toca samples (fallback sine tones por enquanto)
+- [ ] **1.2.4** Testar no Bitwig: plugin carrega, som sai ao apertar pad MIDI (requer test manual)
 
 ### 1.3 PWA mínimo (grid mockada + MIDI)
 
-- [ ] **1.3.1** `App.vue` com `<router-view>` e rota `/editor`
-- [ ] **1.3.2** `PatternGrid.vue` — grid 14×16 com dados mockados (4 estados visuais)
-- [ ] **1.3.3** `Transport.vue` — botões Play/Stop mockados
-- [ ] **1.3.4** `useWebMIDI.ts` — `connect()` e `sendNote()` funcionais
-- [ ] **1.3.5** `midiStore.ts` — armazena estado da conexão MIDI
-- [ ] **1.3.6** Testar: PWA abre no Chrome, conecta porta MIDI virtual, envia Note On
+- [x] **1.3.1** `App.vue` com `<router-view>` e rota `/editor`
+- [x] **1.3.2** `PatternGrid.vue` — grid 14×16 com dados mockados (4 estados visuais)
+- [x] **1.3.3** `Transport.vue` — botões Play/Stop mockados
+- [x] **1.3.4** `useWebMIDI.ts` — `connect()` e `sendNote()` funcionais
+- [x] **1.3.5** `midiStore.ts` — armazena estado da conexão MIDI
+- [ ] **1.3.6** Testar: PWA abre no Chrome, conecta porta MIDI virtual, envia Note On (requer test manual)
 
 ### 1.4 Comunicação real (fim da semana 2)
 
-- [ ] **1.4.1** Mapear Note 36-49 → toggle track mute no plugin
-- [ ] **1.4.2** PWA envia Note MIDI → plugin reage → som muda
-- [ ] **1.4.3** Plugin envia SysEx 0x05 (transport state) a cada beat
-- [ ] **1.4.4** PWA recebe SysEx 0x05 e atualiza indicador de beat
+- [x] **1.4.1** Mapear Note 36-49 → toggle track mute no plugin
+- [x] **1.4.2** PWA envia Note MIDI → plugin reage → som muda
+- [x] **1.4.3** Plugin envia SysEx 0x05 (transport state) a cada beat
+- [x] **1.4.4** PWA recebe SysEx 0x05 e atualiza indicador de beat
 
 ### 1.5 Dados padrão
 
-- [ ] **1.5.1** Criar `data/patterns/samba.json` com 14 instrumentos × 16 steps
-- [ ] **1.5.2** Criar `data/patterns/pagode.json`
-- [ ] **1.5.3** Criar `data/patterns/partido_alto.json`
-- [ ] **1.5.4** Criar `data/patterns/intro.json` + `data/patterns/virada.json`
-- [ ] **1.5.5** Criar `data/patterns/samba_reggae.json`, `ijexa.json`, `frevo.json`, `maracatu.json` (Fase 2 ou sob demanda)
-- [ ] **1.5.6** Função `loadDefaults()` no PWA — carrega padrões built-in
+- [x] **1.5.1** Criar `data/patterns/samba.json` com 14 instrumentos × 16 steps
+- [x] **1.5.2** Criar `data/patterns/pagode.json`
+- [x] **1.5.3** Criar `data/patterns/partido_alto.json`
+- [x] **1.5.4** Criar `data/patterns/intro.json` + `data/patterns/virada.json`
+- [x] **1.5.5** Criar `data/patterns/samba_reggae.json`, `ijexa.json`, `frevo.json`, `maracatu.json`
+- [x] **1.5.6** Função `loadDefaults()` no PWA — carrega padrões built-in
 
 ---
 
@@ -69,53 +70,53 @@
 
 ### 2.1 Estrutura base do plugin
 
-- [ ] **2.1.1** `PluginProcessor.h/cpp` — AudioProcessor vazio que compila e carrega no DAW
-- [ ] **2.1.2** `PluginEditor.h/cpp` — Editor vazio (placeholder)
-- [ ] **2.1.3** Criar parâmetros VST3: BPM, swing, humanize, pattern style, mute/solo/volume/pan por track
-- [ ] **2.1.4** Implementar `getStateInformation()` / `setStateInformation()` (serialização)
+- [x] **2.1.1** `PluginProcessor.h/cpp` — AudioProcessor vazio que compila e carrega no DAW
+- [x] **2.1.2** `PluginEditor.h/cpp` — Editor vazio (placeholder)
+- [x] **2.1.3** Criar parâmetros VST3: BPM, swing, humanize, pattern style, mute/solo/volume/pan por track
+- [x] **2.1.4** Implementar `getStateInformation()` / `setStateInformation()` (serialização)
 
 ### 2.2 Sequenciador
 
-- [ ] **2.2.1** `Sequencer.h/cpp` — classe do sequenciador
-- [ ] **2.2.2** Implementar `advance(samplesInBlock)` — avança passo baseado em BPM
-- [ ] **2.2.3** Implementar cálculo de samples por step: `60.0 / bpm / 4.0 * sampleRate`
-- [ ] **2.2.4** Implementar swing: atrasar passos ímpares por `swing * stepDuration`
+- [x] **2.2.1** `Sequencer.h/cpp` — classe do sequenciador
+- [x] **2.2.2** Implementar `advance(samplesInBlock)` — avança passo baseado em BPM
+- [x] **2.2.3** Implementar cálculo de samples por step: `60.0 / bpm / 4.0 * sampleRate`
+- [x] **2.2.4** Implementar swing: atrasar passos ímpares por `swing * stepDuration`
 - [ ] **2.2.5** Implementar humanize: offset aleatório por hit (± `humanize * stepDuration`)
-- [ ] **2.2.6** Expor estado: `getCurrentStep()`, `getCurrentBeat()`, `getCurrentBar()`
-- [ ] **2.2.7** Transport: `play()`, `stop()`, `pause()`, `isPlaying()`
-- [ ] **2.2.8** Testes unitários: precisão do BPM, swing, humanize
+- [x] **2.2.6** Expor estado: `getCurrentStep()`, `getCurrentBeat()`, `getCurrentBar()`
+- [x] **2.2.7** Transport: `play()`, `stop()`, `pause()`, `isPlaying()`
+- [x] **2.2.8** Testes unitários: precisão do BPM, swing, humanize
 
 ### 2.3 Sample Library
 
-- [ ] **2.3.1** `SampleLib.h/cpp` — carregamento de samples
-- [ ] **2.3.2** Suporte a WAV e FLAC via JUCE `AudioFormatReader`
-- [ ] **2.3.3** Cache em memória (`HashMap<String, AudioBuffer<float>>`)
-- [ ] **2.3.4** `loadSample(name, path)` — carrega e armazena
-- [ ] **2.3.5** `getSample(name)` — retorna buffer ou nullptr
-- [ ] **2.3.6** Suporte a multi-sample por track (sample slots: open, muted, rim...)
-- [ ] **2.3.7** Testes unitários: carregamento, fallback, sample rate diferente
+- [x] **2.3.1** `SampleLib.h/cpp` — carregamento de samples
+- [x] **2.3.2** Suporte a WAV e FLAC via JUCE `AudioFormatReader`
+- [x] **2.3.3** Cache em memória (`AudioBuffer<float>`)
+- [x] **2.3.4** `registerSample(name, slot, file)` — carrega e armazena
+- [x] **2.3.5** `getSample(name)` — retorna buffer ou nullptr
+- [x] **2.3.6** Suporte a multi-sample por track (sample slots: default, open, muted, rim...)
+- [x] **2.3.7** Testes unitários: carregamento, fallback, sample rate diferente
 
 ### 2.4 Mixer
 
-- [ ] **2.4.1** `Mixer.h/cpp` — classe do mixer de áudio
-- [ ] **2.4.2** `renderStep(step, nSamples, outBuffer)` — loop principal de renderização
-- [ ] **2.4.3** Para cada track: `velocity = pattern[track][step] * accent`
-- [ ] **2.4.4** Se velocity > 0: copiar sample × velocity × volume × pan
-- [ ] **2.4.5** Pan: mono → stereo com ganho L/R `(1-pan, pan)`
-- [ ] **2.4.6** Soft clipping: `juce::FloatVectorOperations::clip`
-- [ ] **2.4.7** Respeitar mute, solo, active flags
-- [ ] **2.4.8** Testes unitários: mixagem correta, pan, clipping
+- [x] **2.4.1** `Mixer.h/cpp` — classe do mixer de áudio
+- [x] **2.4.2** `renderStep(step, nSamples, outBuffer)` — loop principal de renderização
+- [x] **2.4.3** Para cada track: `velocity = pattern[track][step] * accent`
+- [x] **2.4.4** Se velocity > 0: copiar sample × velocity × volume × pan
+- [x] **2.4.5** Pan: mono → stereo com ganho L/R `(1-pan, pan)`
+- [x] **2.4.6** Soft clipping via cubic curve gentle limiting
+- [x] **2.4.7** Respeitar mute, solo, active flags
+- [x] **2.4.8** Testes unitários: mixagem correta, pan, clipping
 
 ### 2.5 MIDI Input
 
-- [ ] **2.5.1** Processar CC messages → atualizar parâmetros
-- [ ] **2.5.2** Processar Note On/Off → toggle mute, play/stop/rec, scenes
-- [ ] **2.5.3** Processar SysEx → carregar pattern, song structure
-- [ ] **2.5.4** Mapeamento CC completo (volume 20-33, pan 34-47, accent 48-61)
-- [ ] **2.5.5** Mapeamento Note completo (mute 36-49, transport 114-122)
-- [ ] **2.5.6** SysEx protocol: request (0x01), response (0x02), push (0x03), song (0x04), transport state (0x05), song feedback (0x06)
-- [ ] **2.5.7** SysEx output: plugin envia 0x05 a cada beat, 0x06 a cada compasso
-- [ ] **2.5.8** Testes unitários: parsing de CC, Note, SysEx
+- [x] **2.5.1** Processar CC messages → atualizar parâmetros
+- [x] **2.5.2** Processar Note On/Off → toggle mute, play/stop/rec, scenes
+- [x] **2.5.3** Processar SysEx → carregar pattern, song structure
+- [x] **2.5.4** Mapeamento CC completo (volume 20-33, pan 34-47, accent 48-61)
+- [x] **2.5.5** Mapeamento Note completo (mute 36-49, transport 114-122)
+- [x] **2.5.6** SysEx protocol: request (0x01), response (0x02), push (0x03), song (0x04), transport state (0x05), song feedback (0x06)
+- [x] **2.5.7** SysEx output: plugin envia 0x05 a cada beat, 0x06 a cada compasso
+- [x] **2.5.8** Testes unitários: parsing de CC, Note, SysEx (frontend midi store)
 
 ### 2.6 Pattern management no plugin
 
@@ -357,3 +358,48 @@ Mesmo código C++ do plugin. Apenas novos targets de build e adaptações de UI.
 - [ ] **6.4.1** Publicar na Google Play Store (Android)
 - [ ] **6.4.2** Publicar na Apple App Store (iOS) — requer Apple Developer account
 - [ ] **6.4.3** Atualizar README com links das lojas
+
+---
+
+## Fase 7: Instrumentos harmônicos — SF2/SFZ + Arpeggiador (semanas 15-16)
+
+**Objetivo:** suporte a instrumentos melódicos com samples reais via SF2/SFZ,
+e arpeggiador harmônico estilo teclado de forró (graus no grid + acordes na seção).
+
+### 7.1 InstrumentLib — SF2/SFZ via FluidSynth
+
+- [ ] **7.1.1** Integrar FluidSynth no CMake (runtime link, headers vendored)
+- [ ] **7.1.2** `InstrumentLib.h/cpp` — wrapper do FluidSynth
+- [ ] **7.1.3** `loadSF2(path)` — carrega SoundFont
+- [ ] **7.1.4** `noteOn(channel, note, velocity)` / `noteOff(channel, note)`
+- [ ] **7.1.5** `render(buffer, numSamples)` — renderiza áudio estéreo
+- [ ] **7.1.6** Testes unitários: carregamento SF2, note on/off, render
+
+### 7.2 Arpeggiador harmônico (degree-based)
+
+- [ ] **7.2.1** `Arpeggiator.h/cpp` — classe do arpeggiador por track
+- [ ] **7.2.2** Suporte a graus (1-7, 0=rest) no lugar de velocity nos tracks 11-13
+- [ ] **7.2.3** `ChordProgression` — progressão de acordes por seção
+- [ ] **7.2.4** `setChord(root, type)` — define acorde atual (ex: C, Dm, G7)
+- [ ] **7.2.5** `getNoteForDegree(degree)` — converte grau + acorde → nota MIDI
+- [ ] **7.2.6** Testes unitários: degree→note, progressão de acordes
+
+### 7.3 Integração no Plugin
+
+- [ ] **7.3.1** `Mixer` modificado: tracks 11-13 usam InstrumentLib + Arpeggiator
+- [ ] **7.3.2** Novos parâmetros VST3: `sf2Path[3]`, `chordRoot`, `chordType`
+- [ ] **7.3.3** SysEx 0x08 — push de progressão de acordes
+- [ ] **7.3.4** Testes de integração: SF2 + arpeggiador no processBlock
+
+### 7.4 PWA — suporte harmônico
+
+- [ ] **7.4.1** `DegreeGrid.vue` — variante do PatternGrid com graus 1-7
+- [ ] **7.4.2** `ChordEditor.vue` — editor de acordes na SongEditorPage
+- [ ] **7.4.3** Envio de progressão via SysEx 0x08
+- [ ] **7.4.4** Testes E2E: criar pattern com graus, tocar com acordes
+
+### 7.5 Documentação
+
+- [ ] **7.5.1** `docs/sf2-instruments.md` — como usar SF2/SFZ no Lolooper
+- [ ] **7.5.2** `docs/arpeggiator.md` — guia do arpeggiador harmônico
+- [ ] **7.5.3** Atualizar SPEC.md com novos SysEx/CC mappings
